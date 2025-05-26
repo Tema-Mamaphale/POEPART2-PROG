@@ -1,0 +1,7 @@
+C:\New folder\Chatbot_Luna\obj\Debug\Chatbot_Luna.csproj.AssemblyReference.cache
+C:\New folder\Chatbot_Luna\obj\Debug\Chatbot_Luna.csproj.CoreCompileInputs.cache
+C:\New folder\Chatbot_Luna\bin\Debug\Chatbot_Luna.exe.config
+C:\New folder\Chatbot_Luna\bin\Debug\Chatbot_Luna.exe
+C:\New folder\Chatbot_Luna\bin\Debug\Chatbot_Luna.pdb
+C:\New folder\Chatbot_Luna\obj\Debug\Chatbot_Luna.exe
+C:\New folder\Chatbot_Luna\obj\Debug\Chatbot_Luna.pdb
