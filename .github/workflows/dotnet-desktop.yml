@@ -8,6 +8,7 @@ on:
 
 jobs:
   build:
+
     strategy:
       matrix:
         configuration: [Debug, Release]
@@ -21,34 +22,37 @@ jobs:
       Wap_Project_Path: MyApp.Package\MyApp.Package.wapproj
 
     steps:
-    - name: 🛎️ Checkout repository
+    - name: ⏬ Checkout repository
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
-    - name: 📦 Install .NET SDK
+    - name: ⚙️ Install .NET SDK
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
 
-    - name: 🔧 Setup MSBuild
+    - name: 🛠️ Setup MSBuild
       uses: microsoft/setup-msbuild@v2
 
     - name: 📦 Restore NuGet packages
       run: dotnet restore ${{ env.Solution_Name }}
 
-    - name: 🏗 Build solution
+    - name: 🔧 Build solution - ${{ matrix.configuration }}
       run: msbuild $env:Solution_Name /p:Configuration=${{ matrix.configuration }}
 
     - name: 🧪 Run unit tests
       run: dotnet test ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }}
 
     - name: 🔐 Decode the PFX certificate
-      if: ${{ secrets.Base64_Encoded_Pfx != '' }}
       run: |
-        $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.Base64_Encoded_Pfx }}")
-        $certificatePath = Join-Path -Path $env:Wap_Project_Directory -ChildPath GitHubActionsWorkflow.pfx
-        [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
+        if ("${{ secrets.Base64_Encoded_Pfx }}" -ne "") {
+          $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.Base64_Encoded_Pfx }}")
+          $certificatePath = Join-Path -Path $env:Wap_Project_Directory -ChildPath GitHubActionsWorkflow.pfx
+          [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
+        } else {
+          Write-Host "⚠️ Base64_Encoded_Pfx secret is not set."
+        }
 
     - name: 📦 Package the app (MSIX)
       run: |
@@ -63,13 +67,8 @@ jobs:
     - name: 🧹 Clean up certificate
       run: Remove-Item -Path "$env:Wap_Project_Directory\GitHubActionsWorkflow.pfx"
 
-    - name: 🗂 Show AppPackages directory
-      run: dir "$env:Wap_Project_Directory\AppPackages"
-
-    - name: ☁ Upload MSIX artifacts
+    - name: 📤 Upload MSIX artifacts
       uses: actions/upload-artifact@v4
       with:
         name: MSIX Package
         path: ${{ env.Wap_Project_Directory }}\AppPackages
-
-
